@@ -11,8 +11,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.devzv.composetestbootom.data.imagePaths
+import com.devzv.composetestbootom.Database
+import com.devzv.composetestbootom.data.getImages
 import com.devzv.composetestbootom.ui.theme.ComposeTestBootomTheme
+import org.kodein.di.compose.androidContextDI
+import org.kodein.di.compose.rememberInstance
+import org.kodein.di.compose.withDI
 
 @Composable
 fun CatalogTopLevelScreen(onNext: () -> Unit) {
@@ -32,17 +36,22 @@ fun CatalogFirstLevelScreen(onNext: () -> Unit) {
         Button(onClick = onNext) {
             Text(text = "Next")
         }
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            imagePaths.forEach {
-                item {
-                    AsyncImage(
-                        modifier = Modifier.size(50.dp).background(Color.Gray),
-                        model = it,
-                        contentDescription = null
-                    )
+        withDI(di = androidContextDI()) {
+            val db: Database by rememberInstance()
+            LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                getImages(db).forEach {
+                    item {
+                        AsyncImage(
+                            modifier = Modifier
+                                .size(50.dp)
+                                .background(Color.Gray),
+                            model = it,
+                            contentDescription = null
+                        )
+                    }
                 }
             }
         }

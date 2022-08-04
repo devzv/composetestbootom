@@ -1,7 +1,7 @@
 package com.devzv.composetestbootom
 
 import android.app.Application
-import androidx.lifecycle.ViewModel
+import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import coil.ImageLoader
 import coil.ImageLoaderFactory
@@ -9,10 +9,11 @@ import coil.disk.DiskCache
 import coil.imageLoader
 import coil.request.CachePolicy
 import coil.request.ImageRequest
-import coil.size.ViewSizeResolver
-import com.devzv.composetestbootom.data.imagePaths
+import com.devzv.composetestbootom.data.getImages
 import com.devzv.composetestbootom.screen.registration.PasswordViewModel
 import com.devzv.composetestbootom.screen.registration.RegistrationUseCase
+import com.squareup.sqldelight.android.AndroidSqliteDriver
+import net.sqlcipher.database.SupportFactory
 import org.kodein.di.*
 
 class MyApp : Application(), DIAware, ImageLoaderFactory {
@@ -20,7 +21,33 @@ class MyApp : Application(), DIAware, ImageLoaderFactory {
     override lateinit var di: DI
         private set
 
+    companion object {
+        private const val PRELOAD_IMAGE = false
+        private const val ENCRYPT_DB = true
+    }
+
     private val appDIModule = DI.Module(name = "APP") {
+        bindSingleton<Context> {
+            this@MyApp
+        }
+        bindSingleton {
+            val driver =
+                if (ENCRYPT_DB) {
+                    AndroidSqliteDriver(
+                        schema = Database.Schema,
+                        context = instance(),
+                        name = "app_sqldelight_database_enc",
+                        factory = SupportFactory(byteArrayOf(1))
+                    )
+                } else {
+                    AndroidSqliteDriver(
+                        schema = Database.Schema,
+                        context = instance(),
+                        name = "app_sqldelight_database",
+                    )
+                }
+            Database(driver)
+        }
         bind<RegistrationUseCase>() with singleton(ref = softReference) {
             RegistrationUseCase()
         }
@@ -48,18 +75,17 @@ class MyApp : Application(), DIAware, ImageLoaderFactory {
             import(appDIModule)
         }
 
-        val preloadImage = true
-        if (preloadImage) {
-            imagePaths.forEach {
-                imageLoader.enqueue(ImageRequest.Builder(this)
-                    .data(it)
-                    .memoryCachePolicy(CachePolicy.DISABLED)
-                    .build()
+        if (PRELOAD_IMAGE) {
+            getImages().forEach {
+                imageLoader.enqueue(
+                    ImageRequest.Builder(this)
+                        .data(it)
+                        .memoryCachePolicy(CachePolicy.DISABLED)
+                        .build()
                 )
             }
         }
     }
-
 
 
 }

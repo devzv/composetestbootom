@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.squareup.sqldelight'
 }
 
 android {
@@ -57,6 +58,8 @@ dependencies {
     implementation 'org.kodein.di:kodein-di-framework-compose:7.13.1'
     implementation 'io.coil-kt:coil-bom:2.1.0'
     implementation 'io.coil-kt:coil-compose'
+    implementation 'com.squareup.sqldelight:android-driver:1.5.3'
+    implementation 'net.zetetic:android-database-sqlcipher:4.5.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
