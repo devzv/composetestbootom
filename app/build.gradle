@@ -22,7 +22,8 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -60,6 +61,7 @@ dependencies {
     implementation 'io.coil-kt:coil-compose'
     implementation 'com.squareup.sqldelight:android-driver:1.5.3'
     implementation 'net.zetetic:android-database-sqlcipher:4.5.0'
+    implementation "com.airbnb.android:lottie-compose:5.2.0"
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
