@@ -5,10 +5,13 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,50 +22,53 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.*
-import com.devzv.composetestbootom.screen.RegistrationScreen
 import com.devzv.composetestbootom.screen.AppScreen
 import com.devzv.composetestbootom.screen.CatalogScreen
+import com.devzv.composetestbootom.screen.RegistrationScreen
 import com.devzv.composetestbootom.screen.cart.CartScreen
 import com.devzv.composetestbootom.screen.catalog.CatalogFirstLevelScreen
 import com.devzv.composetestbootom.screen.catalog.CatalogSecondLevelScreen
 import com.devzv.composetestbootom.screen.catalog.CatalogTopLevelScreen
-import com.devzv.composetestbootom.screen.main.*
+import com.devzv.composetestbootom.screen.language.LanguageScreen
+import com.devzv.composetestbootom.screen.main.MainScreen
 import com.devzv.composetestbootom.screen.profile.ProfileScreen
 import com.devzv.composetestbootom.screen.registration.LoginScreen
 import com.devzv.composetestbootom.screen.registration.LoginViewModel
 import com.devzv.composetestbootom.screen.registration.PasswordScreen
 import com.devzv.composetestbootom.screen.registration.PasswordViewModel
 import com.devzv.composetestbootom.screen.shops.ShopsScreen
+import com.devzv.composetestbootom.ui.language.LocalLanguage
+import com.devzv.composetestbootom.ui.language.SupportedLanguage
 import com.devzv.composetestbootom.ui.theme.ComposeTestBootomTheme
-import org.kodein.di.android.closestDI
-import org.kodein.di.bindings.ErasedContext.value
 import org.kodein.di.compose.androidContextDI
-import org.kodein.di.compose.localDI
 import org.kodein.di.compose.rememberInstance
 import org.kodein.di.compose.withDI
-import org.kodein.di.direct
-import org.kodein.di.instance
-import org.kodein.di.provider
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             ComposeTestBootomTheme {
-                AppScreen()
+                val viewModel: MainViewModel = viewModel()
+                CompositionLocalProvider(LocalLanguage provides viewModel.currentLanguage) {
+                    AppScreen(onLanguageChange = { newLang ->
+                        viewModel.onLanguageChange(newLang)
+                    })
+                }
             }
         }
     }
 }
 
 @Composable
-fun AppScreen() {
+fun AppScreen(onLanguageChange: (SupportedLanguage) -> Unit) {
     val appScreens = setOf(
         AppScreen.Main,
         AppScreen.Catalog,
         AppScreen.Cart,
         AppScreen.Shops,
         AppScreen.Profile,
+        AppScreen.Language,
     )
     val navController = rememberNavController()
     Scaffold(
@@ -94,7 +100,9 @@ fun AppScreen() {
             startDestination = AppScreen.Main.route,
         ) {
             composable(route = AppScreen.Main.route) {
-                MainScreen()
+                //CompositionLocalProvider(MyApp.LocalLanguage provides SupportedLanguage.LT) {
+                    MainScreen()
+                //}
             }
             catalogGraph(navController)
 
@@ -110,6 +118,10 @@ fun AppScreen() {
                 }
             }
             registrationGraph(navController)
+
+            composable(route = AppScreen.Language.route){
+                LanguageScreen(onLanguageChange)
+            }
         }
     }
 }
@@ -180,6 +192,6 @@ private fun NavGraphBuilder.catalogGraph(navController: NavController) {
 @Composable
 fun DefaultPreview() {
     ComposeTestBootomTheme {
-        AppScreen()
+        AppScreen(onLanguageChange = {})
     }
 }

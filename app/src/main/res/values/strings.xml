@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">ComposeTestBootom</string>
+
+    <string-array name="test_text">
+        <item>Нажимая кнопку, Вы принимаете условия Политики конфиденциальности.</item>
+        <item>By pressing the button you confirm the terms of the Privacy Policy.</item>
+        <item>Nospiežot pogu Jūs apstipriniet Privātuma politikas noteikumus.</item>
+    </string-array>
+
+    <string-array name="main_screen_text">
+        <item>Главный экран текст</item>
+        <item>Main screen text</item>
+        <item>Galvenā ekrāna teksts</item>
+    </string-array>
+
 </resources>

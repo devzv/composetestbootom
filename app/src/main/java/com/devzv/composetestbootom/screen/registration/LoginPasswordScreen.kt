@@ -5,8 +5,6 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import kotlin.math.log
 
 @Composable
 fun LoginScreen(

@@ -9,6 +9,7 @@ sealed class AppScreen(route: String, title: String = "") : AbstractScreen("AppS
     object Shops : AppScreen("shops", "Shops")
     object Profile : AppScreen("profile", "Profile")
     object Registration : AppScreen("registration")
+    object Language : AppScreen("language", "Language")
 }
 
 sealed class RegistrationScreen(route: String, title: String = "") : AbstractScreen("RegistrationScreen_$route", title) {
